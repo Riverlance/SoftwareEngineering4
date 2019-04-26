@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 /*
     Essa classe foi criada porque o Android não permite que tarefas em background sejam executadas
@@ -81,13 +82,16 @@ public class FetchDataProcess extends AsyncTask
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
 
+        // Limpa lista
+        MainActivity.personListItemAdapter.personListItems.clear();
+
         // Atualiza o dataTextView com os dados recebidos via HTTP
         // MainActivity.dataTextView.setText(this.data);
 
         // Adiciona item na lista (teste)
-        String title = "Title";
-        String subtitle = "Subtitle";
-        MainActivity.personListItemAdapter.personListItems.add(new PersonListItem(title, subtitle));
+        MainActivity.personListItemAdapter.personListItems.add(new PersonListItem("Mr.", "River", "Lance", "riverlance", (short)25));
+
+        // Notifica que a lista foi alterada
         MainActivity.personListItemAdapter.notifyDataSetChanged();
     }
 }

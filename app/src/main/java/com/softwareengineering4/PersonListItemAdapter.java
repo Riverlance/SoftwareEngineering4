@@ -20,8 +20,8 @@ public class PersonListItemAdapter extends BaseAdapter {
         personListItems = new ArrayList<>();
         this.context = context;
 
-        // Valores padrão, caso não seja setado
-        personListItems.add(new PersonListItem("Title", "Subtitle"));
+        // Valor inicial padrão
+        // personListItems.add(new PersonListItem("Title", "Subtitle"));
     }
 
     @Override
@@ -49,9 +49,11 @@ public class PersonListItemAdapter extends BaseAdapter {
         ImageView profileImageView = row.findViewById(R.id.profileImageView);
 
         PersonListItem personListItem = personListItems.get(i);
-        titleTextView.setText(personListItem.title);
-        subtitleTextView.setText(personListItem.subtitle);
-        Picasso.with(context).load("https://randomuser.me/api/portraits/thumb/men/53.jpg").into(profileImageView);
+        titleTextView.setText(personListItem.getName(true));
+        subtitleTextView.setText(personListItem.username);
+        if (!personListItem.pictureThumbnailURL.equals("")) {
+            Picasso.with(context).load(personListItem.pictureThumbnailURL).into(profileImageView); // "https://randomuser.me/api/portraits/thumb/men/53.jpg"
+        }
 
         return row;
     }

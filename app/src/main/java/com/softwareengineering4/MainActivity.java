@@ -25,9 +25,16 @@ public class MainActivity extends AppCompatActivity {
 
         personListItemAdapter = new PersonListItemAdapter(this);
         personListView.setAdapter(personListItemAdapter);
+
+        // Atualiza lista
+        updatePersonList();
     }
 
     public void onClickRefreshButton(View view) {
+        updatePersonList();
+    }
+
+    public void updatePersonList() {
         // Fetch data
         FetchDataProcess fetchDataProcess = new FetchDataProcess(this);
         fetchDataProcess.execute();
