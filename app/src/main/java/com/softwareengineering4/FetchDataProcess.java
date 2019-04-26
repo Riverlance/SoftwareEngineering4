@@ -1,6 +1,11 @@
 package com.softwareengineering4;
 
+import android.content.Context;
 import android.os.AsyncTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +27,11 @@ import java.net.URL;
 public class FetchDataProcess extends AsyncTask
 {
     String data = "";
+    Context context;
+
+    public FetchDataProcess(Context context) {
+        this.context = context;
+    }
 
     // Não pode alterar o UI.
     // Será executado antes do onPostExecute.
@@ -30,7 +40,7 @@ public class FetchDataProcess extends AsyncTask
     protected Void doInBackground(Object[] objects) {
         try {
             // Conexão a um URL
-            URL url = new URL("https://api.myjson.com/bins/j5f6b");
+            URL url = new URL("https://randomuser.me/api/?nat=br&results=20"); // https://api.myjson.com/bins/j5f6b
 
             // Conexão HTTP que permite lermos ou escrevemos dados
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -41,15 +51,25 @@ public class FetchDataProcess extends AsyncTask
             // Nos permite ler os dados recebidos na stream
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
+            // Passando os dados para a variável data
             String line;
             do {
                 line = bufferedReader.readLine();
                 data = String.format("%s%s", data, line); // Concatena cada linha
             } while (line != null);
+
+            /*JSONArray jsonArray = new JSONArray(data);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+
+            }*/
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        /*} catch (JSONException e) {
+            e.printStackTrace();*/
         }
         return null;
     }
@@ -62,6 +82,12 @@ public class FetchDataProcess extends AsyncTask
         super.onPostExecute(o);
 
         // Atualiza o dataTextView com os dados recebidos via HTTP
-        MainActivity.dataTextView.setText(this.data);
+        // MainActivity.dataTextView.setText(this.data);
+
+        // Adiciona item na lista (teste)
+        String title = "Title";
+        String subtitle = "Subtitle";
+        MainActivity.personListItemAdapter.personListItems.add(new PersonListItem(title, subtitle));
+        MainActivity.personListItemAdapter.notifyDataSetChanged();
     }
 }
