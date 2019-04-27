@@ -74,7 +74,7 @@ public class FetchDataProcess extends AsyncTask
 
                     /* Other data of Person */
                     // Gender
-                    personListItem.gender = (short) (jsonObject.getString("gender").equals("gender") ? PersonListItem.GENDER_MALE : PersonListItem.GENDER_FEMALE);
+                    personListItem.gender = jsonObject.getString("gender").equals("male") ? PersonListItem.GENDER_MALE : PersonListItem.GENDER_FEMALE;
                     // Location
                     JSONObject jsonObjectLocation = (JSONObject) jsonObject.get("location");
                     personListItem.locationStreet = jsonObjectLocation.getString("street");
