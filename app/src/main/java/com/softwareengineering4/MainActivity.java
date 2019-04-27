@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     public static Button refreshButton;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updatePersonList() {
         // Fetch data
-        FetchDataProcess fetchDataProcess = new FetchDataProcess(this);
+        FetchDataProcess fetchDataProcess = new FetchDataProcess();
         fetchDataProcess.execute();
     }
 }

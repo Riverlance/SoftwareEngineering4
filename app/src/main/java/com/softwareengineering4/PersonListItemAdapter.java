@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.ArrayList;
 
 public class PersonListItemAdapter extends BaseAdapter {
@@ -49,7 +51,7 @@ public class PersonListItemAdapter extends BaseAdapter {
         ImageView profileImageView = row.findViewById(R.id.profileImageView);
 
         PersonListItem personListItem = personListItems.get(i);
-        titleTextView.setText(personListItem.getName(true));
+        titleTextView.setText(WordUtils.capitalize(personListItem.getName(true)));
         subtitleTextView.setText(personListItem.username);
         if (!personListItem.pictureThumbnailURL.equals("")) {
             Picasso.with(context).load(personListItem.pictureThumbnailURL).into(profileImageView); // "https://randomuser.me/api/portraits/thumb/men/53.jpg"

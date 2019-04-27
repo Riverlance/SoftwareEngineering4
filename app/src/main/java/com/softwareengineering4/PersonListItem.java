@@ -8,8 +8,8 @@ public class PersonListItem {
     String nameFirst;
     String nameLast;
     String username;
-
     short age;
+
     short gender = GENDER_MALE;
 
     String locationStreet = "";
@@ -39,10 +39,10 @@ public class PersonListItem {
     }
 
     public String getGenderToString() {
-        return gender == 1 ? "Masculino" : "Feminino";
+        return gender == GENDER_MALE ? "Masculino" : "Feminino";
     }
     public char getGenderToChar() {
-        return gender == 1 ? 'M' : 'F';
+        return gender == GENDER_MALE ? 'M' : 'F';
     }
 
     public String getLocation() {

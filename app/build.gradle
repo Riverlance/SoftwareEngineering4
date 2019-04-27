@@ -28,4 +28,7 @@ dependencies {
 
     // Carregar imagem a partir de URL
     implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // WordUtils
+    compile 'org.apache.commons:commons-lang3:3.4'
 }

@@ -1,6 +1,5 @@
 package com.softwareengineering4;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
@@ -14,7 +13,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
 
 /*
     Essa classe foi criada porque o Android não permite que tarefas em background sejam executadas
@@ -27,13 +25,6 @@ import java.util.Random;
 */
 public class FetchDataProcess extends AsyncTask
 {
-    String data = "";
-    Context context;
-
-    public FetchDataProcess(Context context) {
-        this.context = context;
-    }
-
     // Não pode alterar o UI.
     // Será executado antes do onPostExecute.
     // Esse método preenche o data com os dados recebidos do banco de dados via HTTP.
@@ -41,7 +32,7 @@ public class FetchDataProcess extends AsyncTask
     protected Void doInBackground(Object[] objects) {
         try {
             // Conexão a um URL
-            URL url = new URL("https://randomuser.me/api/?nat=br&results=20"); // https://api.myjson.com/bins/j5f6b
+            URL url = new URL("https://randomuser.me/api/?nat=br&results=25"); // https://api.myjson.com/bins/j5f6b
 
             // Conexão HTTP que permite lermos ou escrevemos dados
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -53,24 +44,66 @@ public class FetchDataProcess extends AsyncTask
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             // Passando os dados para a variável data
+            String data = "";
             String line;
-            do {
-                line = bufferedReader.readLine();
+            while ((line = bufferedReader.readLine()) != null) {
                 data = String.format("%s%s", data, line); // Concatena cada linha
-            } while (line != null);
+            }
 
-            /*JSONArray jsonArray = new JSONArray(data);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+            // Limpa lista
+            MainActivity.personListItemAdapter.personListItems.clear();
 
-            }*/
+            // Parsing JSONArray to PersonListItem
+            JSONArray jsonArray = (new JSONObject(data)).getJSONArray("results");
+            if (jsonArray != null) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
+                    /* Dados principais necessários para criar um objeto Person */
+                    // Name
+                    JSONObject jsonObjectName = (JSONObject) jsonObject.get("name");
+                    String nameTitle = jsonObjectName.getString("title");
+                    String nameFirst = jsonObjectName.getString("first");
+                    String nameLast = jsonObjectName.getString("last");
+                    // Username
+                    String username = ((JSONObject) jsonObject.get("login")).getString("username");
+                    // Age
+                    short age = Short.parseShort(((JSONObject) jsonObject.get("dob")).getString("age"));
+                    // Person (criando um objeto Person)
+                    PersonListItem personListItem = new PersonListItem(nameTitle, nameFirst, nameLast, username, age);
+
+                    /* Other data of Person */
+                    // Gender
+                    personListItem.gender = (short) (jsonObject.getString("gender").equals("gender") ? PersonListItem.GENDER_MALE : PersonListItem.GENDER_FEMALE);
+                    // Location
+                    JSONObject jsonObjectLocation = (JSONObject) jsonObject.get("location");
+                    personListItem.locationStreet = jsonObjectLocation.getString("street");
+                    personListItem.locationCity = jsonObjectLocation.getString("city");
+                    personListItem.locationState = jsonObjectLocation.getString("state");
+                    // Email
+                    personListItem.email = jsonObject.getString("email");
+                    // Phone
+                    personListItem.phone = jsonObject.getString("phone");
+                    // Picture
+                    JSONObject jsonObjectPicture = (JSONObject) jsonObject.get("picture");
+                    personListItem.pictureLargeURL = jsonObjectPicture.getString("large");
+                    personListItem.pictureMediumURL = jsonObjectPicture.getString("medium");
+                    personListItem.pictureThumbnailURL = jsonObjectPicture.getString("thumbnail");
+
+                    // Adiciona item na lista
+                    MainActivity.personListItemAdapter.personListItems.add(personListItem);
+                }
+            }
+
+        // Não foi possível acessar a URL / URL mal formada
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        // Erro de Entrada/Saída
         } catch (IOException e) {
             e.printStackTrace();
-        /*} catch (JSONException e) {
-            e.printStackTrace();*/
+        // Erro de JSON (conversão de dados de JSON para Object)
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -81,15 +114,6 @@ public class FetchDataProcess extends AsyncTask
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-
-        // Limpa lista
-        MainActivity.personListItemAdapter.personListItems.clear();
-
-        // Atualiza o dataTextView com os dados recebidos via HTTP
-        // MainActivity.dataTextView.setText(this.data);
-
-        // Adiciona item na lista (teste)
-        MainActivity.personListItemAdapter.personListItems.add(new PersonListItem("Mr.", "River", "Lance", "riverlance", (short)25));
 
         // Notifica que a lista foi alterada
         MainActivity.personListItemAdapter.notifyDataSetChanged();
